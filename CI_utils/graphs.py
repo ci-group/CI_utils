@@ -41,7 +41,10 @@ def plot_confusion_matrix(y_pred, y_true, classes, normalize=False, title='Confu
         print('Confusion matrix, without normalization')
 
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
+
+    if title is not '':
+        plt.title(title)
+
     plt.colorbar()
     tick_marks = np.arange(len(classes))
     plt.xticks(tick_marks, classes, rotation=-45, horizontalalignment = 'left')
@@ -60,7 +63,6 @@ def plot_confusion_matrix(y_pred, y_true, classes, normalize=False, title='Confu
         plt.xlabel('Predicted label')
 
     plt.tight_layout()
-
     plt.show()
 
 
@@ -82,8 +84,8 @@ def plot_series(x, y, title, x_label='', y_label='', graph_labels=None, graph_ma
     :param grid: bool
     :return: Returns graph containing y vs x.
     '''
-
-    plt.title(title)
+    if title is not '':
+        plt.title(title)
 
     for i in range(len(y)):
         label = graph_labels[i] if graph_labels else ''
@@ -150,6 +152,25 @@ def plot_loss_vs_epochs(loss_list, title, graph_labels=None, graph_markers=None,
                 graph_markers, graph_linetypes, graph_linecolors, True, grid)
 
 
+def plot_learning_curve(train_samples, error_list, title, y_label, graph_labels=None, graph_markers=None,
+                        graph_linetypes=None, graph_linecolors=None, grid=False):
+    '''
+
+    :param train_samples: list with the number of samples per point.
+    :param error_list: list of train, test errors
+    :param title:
+    :param graph_labels: Labels per {x,y} plot pairs.
+    :param graph_markers: https://matplotlib.org/api/markers_api.html
+    :param graph_linetypes: https://matplotlib.org/gallery/lines_bars_and_markers/line_styles_reference.html
+    :param graph_linecolors: https://matplotlib.org/2.1.1/api/_as_gen/matplotlib.pyplot.plot.html
+    :param grid: bool
+    :return:
+    '''
+
+    plot_series(train_samples, error_list, title, 'Number of samples', y_label, graph_labels,
+                graph_markers, graph_linetypes, graph_linecolors, True, grid)
+
+
 def _scatter(x, labels, title='', graph_labels=None, legend=True, median_labels=True):
     '''
     :param x: 2 dimensional array {x,y} coordinates
@@ -181,12 +202,12 @@ def _scatter(x, labels, title='', graph_labels=None, legend=True, median_labels=
         print(i, '- # samples:', X.shape)
 
         if graph_labels == None:
-            plt.scatter(X[:, 0], X[:, 1], lw=0, s=40,
+            plt.scatter(X[:, 0], X[:, 1], lw=0, s=40, alpha=0.5,
                         c=palette[i], label=i)
 
         else:
             label = str(i)+' - '+graph_labels[i]
-            plt.scatter(X[:, 0], X[:, 1], lw=0, s=40,
+            plt.scatter(X[:, 0], X[:, 1], lw=0, s=40, alpha = 0.5,
                         c=palette[i], label=label)
 
     #plt.xlim(-25, 25)

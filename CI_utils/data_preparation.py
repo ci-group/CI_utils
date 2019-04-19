@@ -63,7 +63,7 @@ def split_dataset_balanced(dataset, validation_split=0.2):
     for i in indices_per_label:
         val_indices.extend(random.sample(i, split))
 
-    train_indices = set(indices).symmetric_difference(set(val_indices))
+    train_indices = list(set(indices).symmetric_difference(set(val_indices)))
 
     print('Sizes are respectively {} and {} samples for train and val respectively'.format(
         len(train_indices), len(val_indices)))
