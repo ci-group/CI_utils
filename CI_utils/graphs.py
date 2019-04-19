@@ -168,10 +168,10 @@ def _scatter(x, labels, title='', graph_labels=None, legend=True, median_labels=
 
     class_based = [[] for x in range(num_classes)]
 
-    plt.figure(dpi=1000)
+    f = plt.figure(dpi=1000)
 
     ax = plt.subplot(aspect='equal')
-    sc = plt.scatter(x[:, 0], x[:, 1], lw=0, s=40, c=palette[labels.astype(np.int)])
+    sc = ax.scatter(x[:, 0], x[:, 1], lw=0, s=40, c=palette[labels.astype(np.int)])
 
     for i in range(len(labels)):
         class_based[labels[i]].append(x[i])
@@ -198,7 +198,7 @@ def _scatter(x, labels, title='', graph_labels=None, legend=True, median_labels=
         plt.title(title)
 
     if legend:
-        plt.legend(fontsize='small', bbox_to_anchor=(1.0, .95))
+        plt.legend(fontsize='small', bbox_to_anchor=(1.0, .95), handletextpad=0.1)
 
     plt.axis('tight')
 
