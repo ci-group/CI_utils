@@ -1,11 +1,19 @@
 import itertools
 import numpy as np
+import seaborn as sns
+
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
+import matplotlib.patheffects as PathEffects
+from matplotlib.font_manager import FontProperties
 
 from sklearn import svm, datasets
+
 from sklearn.model_selection import train_test_split
+
 from sklearn.metrics import confusion_matrix
+
+from sklearn.manifold import TSNE
 
 
 def plot_confusion_matrix(y_pred, y_true, classes, normalize=False, title='Confusion matrix',
@@ -142,6 +150,101 @@ def plot_loss_vs_epochs(loss_list, title, graph_labels=None, graph_markers=None,
                 graph_markers, graph_linetypes, graph_linecolors, True, grid)
 
 
+def _scatter(x, labels, title='', graph_labels=None, legend=True, median_labels=True):
+    '''
+    :param x: 2 dimensional array {x,y} coordinates
+    :param labels: Labels of the corresponding points
+    :param title:
+    :param graph_labels: class names array
+    :param legend: Bool
+    :param median_labels: Bool - Prints the numerical label i.e. {0, ..., N} in the median of the corresponding
+                                 generated per-class point cloud.
+    :return:
+    '''
+
+    # choose a color palette with seaborn.
+    num_classes = len(np.unique(labels))
+    palette = np.array(sns.color_palette("hls", num_classes))
+
+    class_based = [[] for x in range(num_classes)]
+
+    plt.figure(dpi=1000)
+
+    ax = plt.subplot(aspect='equal')
+    sc = plt.scatter(x[:, 0], x[:, 1], lw=0, s=40, c=palette[labels.astype(np.int)])
+
+    for i in range(len(labels)):
+        class_based[labels[i]].append(x[i])
+
+    for i in range(num_classes):
+        X = np.array(class_based[i])
+        print(i, '- # samples:', X.shape)
+
+        if graph_labels == None:
+            plt.scatter(X[:, 0], X[:, 1], lw=0, s=40,
+                        c=palette[i], label=i)
+
+        else:
+            label = str(i)+' - '+graph_labels[i]
+            plt.scatter(X[:, 0], X[:, 1], lw=0, s=40,
+                        c=palette[i], label=label)
+
+    #plt.xlim(-25, 25)
+    #plt.ylim(-25, 25)
+
+    plt.axis('off')
+
+    if title is not '':
+        plt.title(title)
+
+    if legend:
+        plt.legend(fontsize='small', bbox_to_anchor=(1.0, .95))
+
+    plt.axis('tight')
+
+    if median_labels:
+
+        #add the labels for each digit corresponding to the label
+        txts = []
+
+        for i in range(num_classes):
+
+            # Position of each label at median of data points.
+            (xtext, ytext) = np.median(x[labels == i, :], axis=0)
+            txt = ax.text(xtext, ytext, str(i), fontsize=24)
+            txt.set_path_effects([
+                PathEffects.Stroke(linewidth=5, foreground="w"),
+                PathEffects.Normal()])
+            txts.append(txt)
+
+    plt.tight_layout()
+    plt.show()
+
+
+def tSNE_visualization(x, y, title='', graph_labels=None, legend=True, median_labels=True):
+    '''
+    Generates a t-SNE visualization of the high-dimensional input space.
+
+    :param x: 2 dimensional array {x,y} coordinates
+    :param labels: Labels of the corresponding points
+    :param title:
+    :param graph_labels: class names array
+    :param legend: Bool
+    :param median_labels: Bool - Prints the numerical label i.e. {0, ..., N} in the median of the corresponding
+                                 generated per-class point cloud.
+    :return:
+    '''
+
+    sns.set_style('darkgrid')
+    sns.set_palette('muted')
+    sns.set_context("notebook", font_scale=1.5,
+                    rc={"lines.linewidth": 2.5})
+
+    tsne = TSNE(n_components=2, perplexity=50, init='random', random_state=0).fit_transform(x,y)
+
+    _scatter(tsne, y, title, graph_labels, legend, median_labels)
+
+
 
 if __name__ == '__main__':
 
@@ -186,6 +289,8 @@ if __name__ == '__main__':
     y = [np.array([3, 4, 5, 6, 7, 9, 10])]
     plot_loss_vs_epochs(y, 'Classification Performance', ['classif_a'],grid=True)
     plt.show()
+
+
 
 
 
