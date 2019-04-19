@@ -245,7 +245,6 @@ def tSNE_visualization(x, y, title='', graph_labels=None, legend=True, median_la
     _scatter(tsne, y, title, graph_labels, legend, median_labels)
 
 
-
 if __name__ == '__main__':
 
     y_true = [2, 0, 2, 2, 0, 1]
