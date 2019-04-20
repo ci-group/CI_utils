@@ -10,7 +10,7 @@ import torch.utils.data as utils
 from torch.utils.data.sampler import SubsetRandomSampler
 
 
-def train(model, epochs, criterion, optimizer, dataloader, FLAGS, scheduler=None, device = 'cuda:0', save_path = None):
+def train(model, epochs, criterion, optimizer, dataloader, scheduler=None, device = 'cuda:0', save_path = None):
     '''
     :param model:
     :param epochs:
@@ -37,8 +37,8 @@ def train(model, epochs, criterion, optimizer, dataloader, FLAGS, scheduler=None
         print('Epoch {}/{}'.format(epoch + 1, epochs))
         print('-' * 30)
 
-        if scheduler is not None:
-          scheduler.step()
+        #if scheduler is not None:
+        # scheduler.step()
 
         # Each epoch has train n validation set
         for phase in ['train', 'validation']:
@@ -94,8 +94,10 @@ def train(model, epochs, criterion, optimizer, dataloader, FLAGS, scheduler=None
                 val_acc_history.append(epoch_acc)
                 loss_val_history.append(epoch_loss)
 
-            #if scheduler is not None:
-            #  scheduler.step(epoch_acc)
+            # TODO: Differenciate between the different kind of schedulers and their position in the train
+
+            if scheduler is not None:
+              scheduler.step(epoch_acc)
 
             if phase == 'train':
                 train_acc_history.append(epoch_acc)
