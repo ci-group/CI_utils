@@ -213,7 +213,7 @@ def _scatter(x, labels, title='', graph_labels=None, legend=True, median_labels=
     #plt.xlim(-25, 25)
     #plt.ylim(-25, 25)
 
-    plt.axis('on')
+    plt.axis('off')
 
     if title is not '':
         plt.title(title)

@@ -62,6 +62,21 @@ class VGG_Small(nn.Module):
         :return out: outputs of the network
         """
 
+        x = self.feature_extractor(x)
+
+        x = self.linear(x)
+
+        return x
+
+    def feature_extractor(self, x):
+        """
+        Performs forward pass of the input. Here an input tensor x is
+        transformed through several layer transformations.
+
+        :param x: input to the network
+        :return out: outputs of the network
+        """
+
         x = self.max1(F.relu(self.bn1(self.conv1(x))))
         x = self.max2(F.relu(self.bn2(self.conv2(x))))
 
@@ -77,7 +92,6 @@ class VGG_Small(nn.Module):
         x = self.avg(x)
 
         x = x.view(-1, 512)
-        x = self.linear(x)
 
         return x
 
