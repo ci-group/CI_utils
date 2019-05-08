@@ -112,3 +112,137 @@ def unnormalize(samples, std_dev, mean):
 
     un_samples = samples * std_dev + mean
     return un_samples
+
+
+def to_NNlabels(labels):
+    '''
+    :param labels: receives labels with numerical orderings [1, ... , N_max, ..., 2]
+    :return: returns numpy array with labels of the form [[1, 0, ...], ... , [0, ..., 1] , ... , [0, 1, ...]]
+             (see input form)
+    '''
+    max_class = max(labels)
+    NNlabels = np.zeros((len(labels), max_class), dtype=np.float)
+
+    for i in range(len(labels)):
+        NNlabels[i, labels[i]-1] = 1.
+
+    return NNlabels
+
+
+def dataset_from_dict(dict):
+    '''
+    Creates a tuple (samples, label) adequate for CNN training.
+    :param dict: Dict from which to extract the labels. Structure: {label_i:[samples_class_i]}
+    :return: tuple (samples, label) adequate for CNN training.
+    '''
+
+    samples = []
+    labels = []
+    key_mapping = {key:i for i, key in enumerate(dict.keys(),0)}
+
+    [samples.extend(i) for _,i in dict.items()]
+    [labels.extend([key_mapping[key]] * len(dict[key])) for key in dict.keys()]
+
+    samples = np.array(samples)
+    #labels = to_NNlabels(labels) --- Apparently nn_loss requires hot-coded vector with class indices
+    labels = np.array(labels)
+
+    return samples, labels
+
+
+def create_Dataset_for_classif(data, labels):
+    '''
+    Creates a Dataset out of a list, which can directly be used by PyTorch.
+
+    :param data:
+    :param labels:
+    :return: torch.Dataset
+    '''
+
+    data = torch.from_numpy(data).transpose(2, 1)
+
+    labels = np.expand_dims(labels, axis=1)
+    labels = torch.from_numpy(labels).transpose(2, 1)
+
+    return utils.TensorDataset(data, labels)
+
+
+def create_Dataset_for_reconstr(data):
+    '''
+    Creates a Dataset out of a list, which can directly be used by PyTorch. For
+    econstruction tasks.
+
+    :param data:
+    :return: torch.Dataset
+    '''
+
+    data = torch.from_numpy(data).transpose(2, 1)
+    dataset = utils.TensorDataset(data, data)
+
+    return utils.TensorDataset(dataset, dataset)
+
+
+def create_Dataset_for_classif_and_reconstr(data, labels):
+    '''
+    Creates a Dataset out of a list, which can directly be used by PyTorch. For
+    combined classification/reconstruction tasks.
+
+    :param data:
+    :param labels:
+    :return: torch.Dataset
+    '''
+
+    labels = np.expand_dims(labels, axis=1)
+    labels = np.expand_dims(labels, axis=2)
+
+    data = torch.from_numpy(data).transpose(2, 1)
+    labels_reconstr = torch.from_numpy(np.concatenate((data, labels), axis=1)).transpose(2, 1)
+
+    return utils.TensorDataset(data, labels_reconstr)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
