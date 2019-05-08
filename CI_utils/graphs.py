@@ -132,6 +132,29 @@ def plot_acc_vs_epochs(acc_list, title, graph_labels=None, graph_markers=None,
                 graph_markers, graph_linetypes, graph_linecolors, True, grid)
 
 
+def plot_err_vs_epochs(acc_list, title, graph_labels=None, graph_markers=None,
+                       graph_linetypes=None, graph_linecolors=None, grid=False):
+    '''
+    Returns plot of multiple accuracies vs epochs
+
+    :param acc_list: List of NumPy Arrays - Accuracies for multiple classifiers
+    :param title:
+    :param graph_labels: Labels per {x,y} plot pairs.
+    :param graph_markers: https://matplotlib.org/api/markers_api.html
+    :param graph_linetypes: https://matplotlib.org/gallery/lines_bars_and_markers/line_styles_reference.html
+    :param graph_linecolors: https://matplotlib.org/2.1.1/api/_as_gen/matplotlib.pyplot.plot.html
+
+    :param grid: bool
+    :return:
+    '''
+
+    acc_list = 1 - np.array(acc_list)
+
+    x = np.linspace(1, len(acc_list[0]), num=len(acc_list[0]))
+    plot_series(x, acc_list, title, 'Epoch', 'Classification Error', graph_labels,
+                graph_markers, graph_linetypes, graph_linecolors, True, grid)
+
+
 def plot_loss_vs_epochs(loss_list, title, graph_labels=None, graph_markers=None,
                         graph_linetypes=None, graph_linecolors=None, grid=False):
     '''
